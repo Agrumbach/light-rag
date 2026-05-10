@@ -1,6 +1,0 @@
-FROM apache/age:latest
-
-# pgvector auf dem apache/age (Debian/PostgreSQL 17) Image nachinstallieren
-RUN apt-get update \
-    && apt-get install -y postgresql-18-pgvector \
-    && rm -rf /var/lib/apt/lists/*

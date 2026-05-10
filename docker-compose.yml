@@ -1,15 +1,20 @@
 services:
   postgres:
     build:
-      context: .
-      dockerfile: Dockerfile.postgres
+      dockerfile_inline: |
+        FROM apache/age:latest
+        RUN apt-get update \
+            && apt-get install -y postgresql-18-pgvector \
+            && rm -rf /var/lib/apt/lists/*
     environment:
       POSTGRES_USER: lightrag
       POSTGRES_PASSWORD: lightrag
       POSTGRES_DB: lightrag
     volumes:
       - ./data/postgres:/var/lib/postgresql
-      - ./init-extensions.sql:/docker-entrypoint-initdb.d/init-extensions.sql
+    configs:
+      - source: init_extensions
+        target: /docker-entrypoint-initdb.d/init-extensions.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U lightrag -d lightrag"]
       interval: 10s
@@ -36,3 +41,9 @@ services:
       INPUT_DIR: "/app/data/inputs"
       HOST: "0.0.0.0"
       PORT: "9621"
+
+configs:
+  init_extensions:
+    content: |
+      CREATE EXTENSION IF NOT EXISTS vector;
+      CREATE EXTENSION IF NOT EXISTS age;
