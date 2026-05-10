@@ -6,15 +6,14 @@ services:
         RUN apt-get update \
             && apt-get install -y postgresql-18-pgvector \
             && rm -rf /var/lib/apt/lists/*
+        RUN echo "CREATE EXTENSION IF NOT EXISTS vector;\nCREATE EXTENSION IF NOT EXISTS age;" \
+            > /docker-entrypoint-initdb.d/init-extensions.sql
     environment:
       POSTGRES_USER: lightrag
       POSTGRES_PASSWORD: lightrag
       POSTGRES_DB: lightrag
     volumes:
       - ./data/postgres:/var/lib/postgresql
-    configs:
-      - source: init_extensions
-        target: /docker-entrypoint-initdb.d/init-extensions.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U lightrag -d lightrag"]
       interval: 10s
@@ -40,9 +39,3 @@ services:
       INPUT_DIR: "/app/data/inputs"
       HOST: "0.0.0.0"
       PORT: "9621"
-
-configs:
-  init_extensions:
-    content: |
-      CREATE EXTENSION IF NOT EXISTS vector;
-      CREATE EXTENSION IF NOT EXISTS age;
