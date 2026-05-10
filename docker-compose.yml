@@ -29,7 +29,6 @@ services:
     volumes:
       - ./data/rag_storage:/app/data/rag_storage
       - ./data/inputs:/app/data/inputs
-      - ./.env:/app/.env
     depends_on:
       postgres:
         condition: service_healthy
