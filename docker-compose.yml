@@ -34,6 +34,7 @@ services:
     restart: on-failure
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    env_file: .env
     environment:
       WORKING_DIR: "/app/data/rag_storage"
       INPUT_DIR: "/app/data/inputs"
