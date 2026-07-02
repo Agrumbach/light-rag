@@ -1,5 +1,16 @@
 services:
   postgres:
+    shm_size: 1g
+    command:
+      - postgres
+      - -c
+      - shared_buffers=4GB
+      - -c
+      - effective_cache_size=12GB
+      - -c
+      - maintenance_work_mem=1GB
+      - -c
+      - work_mem=32MB
     build:
       dockerfile_inline: |
         FROM apache/age:latest
@@ -31,7 +42,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    restart: on-failure
+    restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file: .env
